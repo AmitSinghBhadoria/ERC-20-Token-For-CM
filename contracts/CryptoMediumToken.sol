@@ -9,11 +9,15 @@ contract CryptoMediumToken {
     string public standard = "CMT v1.0";
     uint256 public totalSupply;
     mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     // Transfer event
-    event Transfer(
-        address indexed _from,
-        address indexed _to,
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+
+    // Approve event
+    event Approval(
+        address indexed _owner,
+        address indexed _spender,
         uint256 _value
     );
 
@@ -24,19 +28,31 @@ contract CryptoMediumToken {
         //assing initial supply to a account
     }
 
-    // Transfer
+    // Transfer function
     function transfer(address _to, uint256 _value)
         public
         returns (bool success)
     {
         // Throw  Exception if account does'nt have enough
-        require(balanceOf[msg.sender] >= _value);
+        require(balanceOf[msg.sender] >= _value, "sender ");
         // transfer the amount
         balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _value;
         // emit Transfer event
         emit Transfer(msg.sender, _to, _value);
         // Return a boolean
+        return true;
+    }
+
+    // Approve Function
+    function approve(address _spender, uint256 _value)
+        public
+        returns (bool success)
+    {
+        // transfer approved transaction
+        allowance[msg.sender][_spender] = _value;
+        // fire Approve event
+        emit Approval(msg.sender, _spender, _value);
         return true;
     }
 }
