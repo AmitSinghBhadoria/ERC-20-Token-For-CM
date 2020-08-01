@@ -34,7 +34,7 @@ contract CryptoMediumToken {
         returns (bool success)
     {
         // Throw  Exception if account does'nt have enough
-        require(balanceOf[msg.sender] >= _value, "sender ");
+        require(balanceOf[msg.sender] >= _value, "sender has enough balance");
         // transfer the amount
         balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _value;
@@ -53,6 +53,31 @@ contract CryptoMediumToken {
         allowance[msg.sender][_spender] = _value;
         // fire Approve event
         emit Approval(msg.sender, _spender, _value);
+        return true;
+    }
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
+        // Require _from has enough balance
+        require(
+            _value <= balanceOf[_from],
+            "account must have sufficient balance"
+        );
+        // Require allowance is big enough
+        require(
+            _value <= allowance[_from][msg.sender],
+            "account must have sufficient allowance"
+        );
+        // change the balance
+        balanceOf[_from] -= _value;
+        balanceOf[_to] += _value;
+        // update the allowance
+        allowance[_from][msg.sender] -= _value;
+        // transfer event
+        emit Transfer(_from, _to, _value);
+        //return a boolean
         return true;
     }
 }
